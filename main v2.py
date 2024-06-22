@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as tk, math
 from tkinter import messagebox
 
 SCREEN_WIDTH = 960
@@ -58,7 +58,17 @@ def addedge(event): # Adds an edge between nodes
             rcoords.append(graph[node][1])
             can.create_line(rcoords[1], rcoords[2], rcoords[4], rcoords[5], fill="red", width=2)
 
-            edges.append([rcoords[0], rcoords[3]]) # Added nodes to edge list
+            startx = rcoords[4] if rcoords[1]>rcoords[4] else rcoords[1] # Find middle of hypo for text
+            starty = rcoords[5] if rcoords[2]>rcoords[5] else rcoords[2] # Find middle of hypo for text
+
+            # Hypo calculation
+            xdiff = abs(rcoords[4] - rcoords[1])
+            ydiff = abs(rcoords[5] - rcoords[2])
+            hypo = int(math.sqrt(ydiff**2 + xdiff**2))
+
+            can.create_text(startx+xdiff/2, starty+ydiff/2+20, text=f"{hypo}") # Add weight on edge
+
+            edges.append([rcoords[0], rcoords[3], xdiff, ydiff, hypo]) # Added nodes to edge list
             lbl_edgedata.delete("1.0", tk.END) # clear text
             lbl_edgedata.insert(tk.END, edges) # add text
 
