@@ -30,8 +30,9 @@ def addnode(event): # Adds the nodes
     nodecoords = [event.x, event.y, x1, y1, x2, y2]
     graph[node] = nodecoords
 
-    lbl_data.delete("1.0", tk.END) # clear text
-    lbl_data.insert(tk.END, graph) # add text
+    lbl_nodedata.delete("1.0", tk.END) # clear text
+    lbl_nodedata.insert(tk.END, graph) # add text
+
     x, y = nodecoords[:2]
     can.create_text(event.x, y1+25, text=f"{node}")
     can.create_text(event.x, y1+45, text=f"x: {x} y: {y}")
@@ -43,29 +44,38 @@ def checknode(event): # Returns gets node from graph dictionary
             return (node)
         
 def addedge(event): # Adds an edge between nodes
-    global clicks, can
+    global clicks, can, edge
     node = checknode(event)
     if node != None:
         if clicks < 1:
+            rcoords.append(node)
             rcoords.append(graph[node][0])
             rcoords.append(graph[node][1])
             clicks+=1
         else:
+            rcoords.append(node)
             rcoords.append(graph[node][0])
             rcoords.append(graph[node][1])
-            can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=2)
+            can.create_line(rcoords[1], rcoords[2], rcoords[4], rcoords[5], fill="red", width=2)
+
+            edges.append([rcoords[0], rcoords[3]]) # Added nodes to edge list
+            lbl_edgedata.delete("1.0", tk.END) # clear text
+            lbl_edgedata.insert(tk.END, edges) # add text
+
             rcoords.clear()
             clicks = 0
 
 # Menu Frame (Needs to be global)
 lbl_GUI = tk.Label(gui, text="GUI", bg="Grey")
 lbl_DV = tk.Label(dataview, text="DATAVIEW", bg="Light Grey")
-can = tk.Canvas(display, width=810, height=650)
+can = tk.Canvas(display, width=810, height=650) # Canvas
+lbl_nodedata = tk.Text(dataview, height=5)
+lbl_edgedata = tk.Text(dataview, height=5)
+lbl_xy = tk.Label(gui, text="xx")
 graph = {}
+edges = []
 clicks = 0
 rcoords = []
-lbl_data = tk.Text(dataview, height=5)
-lbl_xy = tk.Label(gui, text="xx")
 
 # Menu Frame
 def placeGUI():
@@ -73,9 +83,10 @@ def placeGUI():
     lbl_xy.place(x=5,y=100)
     lbl_DV.place(x=0,y=0,width=960,height=150)
     can.place(x=0,y=0,width=810,height=650)
-    can.bind("<Button-1>", addnode)
-    can.bind("<Button-3>", addedge)
-    lbl_data.place(x=0,y=0,width=960,height=150)
+    can.bind("<Button-1>", addnode) # Left click
+    can.bind("<Button-3>", addedge) # Right click
+    lbl_nodedata.place(x=0,y=0,width=960,height=75) # For nodes
+    lbl_edgedata.place(x=0,y=75,width=960,height=75) # For edges
 
 placeGUI()
 root.mainloop()
