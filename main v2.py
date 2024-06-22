@@ -47,23 +47,19 @@ def checknode(event):
         
 def addedge(event):
     global clicks, can
-
-    lbl_xy.config(text={event.x, event.y})
-
+    # lbl_xy.config(text={event.x, event.y})
     node = checknode(event)
-
-    if clicks < 1:
-        rcoords.append(node[0])
-        rcoords.append(node[1])
-        clicks+=1
-    else:
-        rcoords.append(node[0])
-        rcoords.append(node[1])
-        can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=2)
-        rcoords.clear()
-        clicks = 0
-
-
+    if node != None:
+        if clicks < 1:
+            rcoords.append(node[0])
+            rcoords.append(node[1])
+            clicks+=1
+        else:
+            rcoords.append(node[0])
+            rcoords.append(node[1])
+            can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=2)
+            rcoords.clear()
+            clicks = 0
 
 # Menu Frame (Needs to be global)
 lbl_GUI = tk.Label(gui, text="GUI", bg="Grey")
