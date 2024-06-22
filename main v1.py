@@ -1,4 +1,4 @@
-import tkinter as tk, random
+import tkinter as tk, random, time
 from tkinter import messagebox
 
 root = tk.Tk()
@@ -18,7 +18,6 @@ menu.place(x=0,y=0,width=150,height=650)
 screen.place(x=150,y=0,width=810,height=650)
 dataframe.place(x=0,y=650,width=960,height=150)
 
-
 # Data
 grid = [] # Visual of obstacles
 obstacles = [] # Ostacles
@@ -28,10 +27,9 @@ def clearmap():
     screen.destroy()
     screen = tk.Frame(root)
     screen.place(x=150,y=0,width=810,height=650)
-
 # When click creates boundary
-def addnode(item):
-    r, c = item
+def addnode(position):
+    r, c = position
     grid[r][c].config(bg="Grey") if grid[r][c].cget("background") == "SystemButtonFace" else grid[r][c].config(bg="SystemButtonFace")
     coord = r*width + c
     obstacles.append(coord)   
@@ -94,7 +92,72 @@ def genobstacles():
     lbl_data.delete("1.0", tk.END)
     lbl_data.insert(tk.END, obstacles)
     lbl_data.insert(tk.END, " No. Obs "+ str(len(obstacles)))
-        
+
+def tocoords(position):
+    # Convert to coords
+    return position // width, position % width
+
+def backtoposition(coords:tuple):
+    # Convert to position index
+    r, c = coords
+    return r*width + c
+
+def runalgor():
+    global grid, obstacles, explored
+    explored = []
+    
+    start = 0
+    end = 624
+    grid[tocoords(start)[0]][tocoords(start)[1]].config(bg="Blue")
+    grid[tocoords(end)[0]][tocoords(end)[1]].config(bg="Blue")
+
+    def djkstras(node):
+        #Search surrounding nodes
+        nodecoords = tocoords(node)
+        y, x = nodecoords
+
+        # up
+        if y!=0:
+            y1=y-1
+            explored.append([y1, x])
+            grid[y1][x].config(bg="Purple")
+            djkstras(backtoposition([y1, x]))
+        else:
+            return 0
+
+        # # down
+        if y!=width-1:
+            y2=y+1
+            newcoords = [y2, x]
+            explored.append(newcoords)
+            grid[y2][x].config(bg="Purple")
+            print(newcoords)
+            djkstras(backtoposition(newcoords))
+            # time.sleep(0.5)
+        else:
+            return 0
+           
+        # left
+        if x!=0:
+            x1=x-1
+            explored.append([y, x1])
+            grid[y][x1].config(bg="Purple")
+            djkstras(backtoposition([y, x1]))
+        else:
+            return 0
+
+        # right
+        if x!=width-1:
+            x2=x+1
+            explored.append([y, x2])
+            grid[y][x2].config(bg="Purple")
+            djkstras(backtoposition([y, x2]))
+        else:
+            return 0
+
+        # return empty nodes as tuple
+    djkstras(start)
+
 ##################################################################################################
 # Menu Frame
 def setelements():
@@ -132,8 +195,11 @@ def setelements():
     lbl_info = tk.Label(menu, text="Width: " + str(defaultwidth) + " Area: " + str(defaultwidth**2))
     lbl_info.pack()
 
-    lbl_data = tk.Text(dataframe)
+    lbl_data = tk.Text(dataframe, height=5)
     lbl_data.pack()
+
+    btn_go = tk.Button(menu, text="Algorithm", command=runalgor)
+    btn_go.pack()
 
 setelements()
 makemap()
