@@ -31,18 +31,22 @@ def addnode(event):
     x1, y1 = (event.x - size), (event.y - size)
     x2, y2 = (event.x + size), (event.y + size)
     can.create_oval(x1, y1, x2, y2, fill = python_green)
+
+    node = chr(len(graph) + 65)
     nodecoords = [event.x, event.y, x1, y1, x2, y2]
-    graph.append(nodecoords)
+    graph[node] = nodecoords
+
     lbl_data.delete("1.0", tk.END) # clear text
     lbl_data.insert(tk.END, graph) # add text
     x, y = nodecoords[:2]
-    can.create_text(event.x, y1+30, text=f"x: {x} y: {y}")
+    can.create_text(event.x, y1+25, text=f"{node}")
+    can.create_text(event.x, y1+45, text=f"x: {x} y: {y}")
 
 def checknode(event):
     global lbl_xy
     # lbl_xy.config(text={event.x, event.y})
-    for x, node in enumerate(graph):
-        if event.x >= node[2] and event.x <=node[4] and event.y >= node[3] and event.y <= node[5]:
+    for node in graph:
+        if event.x >= graph[node][2] and event.x <=graph[node][4] and event.y >= graph[node][3] and event.y <= graph[node][5]:
             return (node)
         
 def addedge(event):
@@ -51,12 +55,12 @@ def addedge(event):
     node = checknode(event)
     if node != None:
         if clicks < 1:
-            rcoords.append(node[0])
-            rcoords.append(node[1])
+            rcoords.append(graph[node][0])
+            rcoords.append(graph[node][1])
             clicks+=1
         else:
-            rcoords.append(node[0])
-            rcoords.append(node[1])
+            rcoords.append(graph[node][0])
+            rcoords.append(graph[node][1])
             can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=2)
             rcoords.clear()
             clicks = 0
@@ -65,7 +69,7 @@ def addedge(event):
 lbl_GUI = tk.Label(gui, text="GUI", bg="Grey")
 lbl_DV = tk.Label(dataview, text="DATAVIEW", bg="Light Grey")
 can = tk.Canvas(display, width=810, height=650)
-graph = []
+graph = {}
 clicks = 0
 rcoords = []
 lbl_data = tk.Text(dataview, height=5)
