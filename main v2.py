@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from playsound import playsound
 
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 800
@@ -8,7 +7,6 @@ root = tk.Tk()
 root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 root.title(f"Djkstra Algorithm v2 {SCREEN_WIDTH}x{SCREEN_HEIGHT} ")
 root.resizable(False, False)
-# root.config(bg="White")
 
 # Frames
 gui = tk.Frame(root)
@@ -20,11 +18,7 @@ gui.place(x=0,y=0,width=150,height=650)
 display.place(x=150,y=0,width=810,height=650)
 dataview.place(x=0,y=650,width=960,height=150)
 
-# Data
-def playfx():
-    playsound('pop.mp3')
-
-def addnode(event):
+def addnode(event): # Adds the nodes
     global can, graph
     python_green = "#476042"
     size = 6
@@ -42,16 +36,14 @@ def addnode(event):
     can.create_text(event.x, y1+25, text=f"{node}")
     can.create_text(event.x, y1+45, text=f"x: {x} y: {y}")
 
-def checknode(event):
+def checknode(event): # Returns gets node from graph dictionary
     global lbl_xy
-    # lbl_xy.config(text={event.x, event.y})
     for node in graph:
         if event.x >= graph[node][2] and event.x <=graph[node][4] and event.y >= graph[node][3] and event.y <= graph[node][5]:
             return (node)
         
-def addedge(event):
+def addedge(event): # Adds an edge between nodes
     global clicks, can
-    # lbl_xy.config(text={event.x, event.y})
     node = checknode(event)
     if node != None:
         if clicks < 1:
@@ -73,23 +65,17 @@ graph = {}
 clicks = 0
 rcoords = []
 lbl_data = tk.Text(dataview, height=5)
-# Radio buttons
-# btn_AddNode = tk.Button(gui, text="Add node", command=lambda x=1:guiEditing(x))
-# btn_AddEdge = tk.Button(gui, text="Add edge", command=lambda x=2:guiEditing(x))
 lbl_xy = tk.Label(gui, text="xx")
 
 # Menu Frame
 def placeGUI():
     lbl_GUI.place(x=0,y=0,width=150,height=650)
-    # btn_AddNode.place(x=5,y=5)
-    # btn_AddEdge.place(x=5,y=50)
     lbl_xy.place(x=5,y=100)
     lbl_DV.place(x=0,y=0,width=960,height=150)
     can.place(x=0,y=0,width=810,height=650)
     can.bind("<Button-1>", addnode)
     can.bind("<Button-3>", addedge)
     lbl_data.place(x=0,y=0,width=960,height=150)
-    # can.bind("<Motion>", checknode)
 
 placeGUI()
 root.mainloop()
