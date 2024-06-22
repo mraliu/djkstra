@@ -38,28 +38,32 @@ def addnode(event):
     x, y = nodecoords[:2]
     can.create_text(event.x, y1+30, text=f"x: {x} y: {y}")
 
+def checknode(event):
+    global lbl_xy
+    # lbl_xy.config(text={event.x, event.y})
+    for x, node in enumerate(graph):
+        if event.x >= node[2] and event.x <=node[4] and event.y >= node[3] and event.y <= node[5]:
+            return (node)
+        
 def addedge(event):
     global clicks, can
+
+    lbl_xy.config(text={event.x, event.y})
+
+    node = checknode(event)
+
     if clicks < 1:
-        rcoords.append(event.x)
-        rcoords.append(event.y)
+        rcoords.append(node[0])
+        rcoords.append(node[1])
         clicks+=1
     else:
-        rcoords.append(event.x)
-        rcoords.append(event.y)
-        can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=3)
+        rcoords.append(node[0])
+        rcoords.append(node[1])
+        can.create_line(rcoords[0], rcoords[1], rcoords[2], rcoords[3], fill="red", width=2)
         rcoords.clear()
         clicks = 0
 
-def checknode(event):
-    global lbl_xy
-    lbl_xy.config(text={event.x, event.y})
 
-    def checking():
-        for x, node in enumerate(graph):
-            if event.x >= node[2] and event.x <=node[4] and event.y >= node[3] and event.y <= node[5]:
-                return (x)
-    print(checking())
 
 # Menu Frame (Needs to be global)
 lbl_GUI = tk.Label(gui, text="GUI", bg="Grey")
